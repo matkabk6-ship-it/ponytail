@@ -36,6 +36,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git commit -m "Extract ponytail-main.zip into repository"
+            git pull --rebase origin main
             git push
           else
             echo "No extracted changes to commit."
