@@ -27,9 +27,9 @@ jobs:
           shopt -s dotglob
           entries=(/tmp/ponytail-extract/*)
           if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
-            cp -a "${entries[0]}"/. .
+            rsync -a --exclude=".github/workflows/" "${entries[0]}"/ .
           else
-            cp -a /tmp/ponytail-extract/. .
+            rsync -a --exclude=".github/workflows/" /tmp/ponytail-extract/ .
           fi
           git add -A
           if ! git diff --cached --quiet; then
