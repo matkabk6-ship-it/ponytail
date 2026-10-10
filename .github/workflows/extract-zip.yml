@@ -1,0 +1,42 @@
+name: Extract repository ZIP
+
+on:
+  push:
+    paths:
+      - "ponytail-main.zip"
+      - ".github/workflows/extract-zip.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract ZIP into repository root
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y unzip
+          mkdir -p /tmp/ponytail-extract
+          unzip -q -o ponytail-main.zip -d /tmp/ponytail-extract
+          shopt -s dotglob
+          entries=(/tmp/ponytail-extract/*)
+          if [ "${#entries[@]}" -eq 1 ] && [ -d "${entries[0]}" ]; then
+            cp -a "${entries[0]}"/. .
+          else
+            cp -a /tmp/ponytail-extract/. .
+          fi
+          git add -A
+          if ! git diff --cached --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "Extract ponytail-main.zip into repository"
+            git push
+          else
+            echo "No extracted changes to commit."
+          fi
