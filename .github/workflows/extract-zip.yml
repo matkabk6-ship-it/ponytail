@@ -40,3 +40,5 @@ jobs:
           else
             echo "No extracted changes to commit."
           fi
+
+# Trigger extraction workflow on this workflow update.
